@@ -47,8 +47,8 @@ sub get_flash_flags {
 }
 
 sub get_user_flags {
-	my $conf_filename = config_home 'chromium-flags.conf';
-	open my $conf, '<', $conf_filename or return;
+	my $conf_path = config_home 'chromium-flags.conf';
+	open my $conf, '<', $conf_path or return;
 
 	my @lines = grep {!/^(\s*#|\s*$)/} map { chomp; $_ } <$conf>;
 	return if not @lines;
@@ -58,7 +58,7 @@ sub get_user_flags {
 	unless (@user_flags) {
 		system '@LAUNCHER_DERP@',
 			'Unable to parse user flags',
-			"Please check $conf_filename for errors (e.g. mismatched quotes). " .
+			"Please check $conf_path for errors (e.g. mismatched quotes). " .
 			"The launcher will now exit.";
 		exit 1;
 	}
