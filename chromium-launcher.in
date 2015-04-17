@@ -67,6 +67,6 @@ sub get_user_flags {
 }
 
 $ENV{CHROME_WRAPPER} = abs_path($0);
-$ENV{CHROME_DESKTOP} = 'chromium.desktop';
+$ENV{CHROME_DESKTOP} = 'chromium@CHROMIUM_SUFFIX@.desktop';
 
 exec '@CHROMIUM_BIN@', get_flash_flags, get_user_flags, @ARGV;

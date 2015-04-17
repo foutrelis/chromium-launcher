@@ -18,6 +18,7 @@ chromium-launcher: chromium-launcher.in
 	sed \
 		-e "s|@PEPPER_FLASH_DIR@|$(PEPPER_FLASH_DIR)|g" \
 		-e "s|@CHROMIUM_BIN@|$(CHROMIUM_BIN)|g" \
+		-e "s|@CHROMIUM_SUFFIX@|$(CHROMIUM_SUFFIX)|g" \
 		-e "s|@LAUNCHER_DERP@|$(LAUNCHER_DERP)|g" \
 		$< >$@
 
