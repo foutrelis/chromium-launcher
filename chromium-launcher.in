@@ -1,0 +1,72 @@
+#!/usr/bin/env perl
+
+# Simple Chromium launcher with support for Pepper Flash
+#
+# Some rudimentary support for user flags is provided via a chromium-flags.conf
+# config file placed in $HOME/.config/ (or $XDG_CONFIG_HOME). Arguments are
+# split on whitespace and shell quoting rules apply but no further parsing is
+# performed. In case of improper quoting anywhere in the file, a fatal error is
+# raised. Lines starting with a hash symbol (#) are skipped.
+
+use strict;
+use warnings;
+
+use Cwd qw( abs_path );
+use JSON::PP qw( decode_json );
+use File::BaseDir qw( config_home );
+use Text::ParseWords qw ( shellwords );
+
+my %PEPPER_FLASH = (
+	manifest => '@PEPPER_FLASH_DIR@/manifest.json',
+	plugin => '@PEPPER_FLASH_DIR@/libpepflashplayer.so',
+);
+
+sub get_flash_version {
+	open my $manifest, '<', $PEPPER_FLASH{manifest} or return;
+
+	my $json;
+
+	eval {
+		$json = decode_json do { local $/; <$manifest> };
+	};
+
+	return $json->{version} if $json;
+}
+
+sub get_flash_flags {
+	my $flash_version = get_flash_version() // '';
+	my @flash_flags;
+
+	if ($flash_version =~ /^[\d.]+$/ and -f $PEPPER_FLASH{plugin}) {
+		@flash_flags = (
+			"--ppapi-flash-path=$PEPPER_FLASH{plugin}",
+			"--ppapi-flash-version=$flash_version");
+	}
+
+	return @flash_flags;
+}
+
+sub get_user_flags {
+	my $conf_filename = config_home 'chromium-flags.conf';
+	open my $conf, '<', $conf_filename or return;
+
+	my @lines = grep {!/^(\s*#|\s*$)/} map { chomp; $_ } <$conf>;
+	return if not @lines;
+
+	my @user_flags = shellwords @lines;
+
+	unless (@user_flags) {
+		system '@LAUNCHER_DERP@',
+			'Unable to parse user flags',
+			"Please check $conf_filename for errors (e.g. mismatched quotes)." .
+			"The launcher will now exit.";
+		exit 1;
+	}
+
+	return @user_flags;
+}
+
+$ENV{CHROME_WRAPPER} = abs_path($0);
+$ENV{CHROME_DESKTOP} = 'chromium.desktop';
+
+exec '@CHROMIUM_BIN@', get_flash_flags, get_user_flags, @ARGV;
