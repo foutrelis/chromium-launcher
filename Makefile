@@ -27,9 +27,8 @@ install: all
 	install -Dm755 launcher-derp "$(DESTDIR)$(LAUNCHER_DIR)/launcher-derp"
 
 uninstall:
-	$(RM) "$(DESTDIR)$(LAUNCHER_DIR)/chromium-launcher"
-	$(RM) "$(DESTDIR)$(LAUNCHER_DIR)/launcher-derp"
 	$(RM) "$(DESTDIR)$(PREFIX)/bin/chromium$(CHROMIUM_SUFFIX)"
+	$(RM) "$(DESTDIR)$(LAUNCHER_DIR)/launcher-derp"
 	rmdir "$(DESTDIR)$(LAUNCHER_DIR)"
 
 clean:
