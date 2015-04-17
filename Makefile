@@ -23,10 +23,8 @@ chromium-launcher: chromium-launcher.in
 		$< >$@
 
 install: all
-	install -Dm755 chromium-launcher "$(DESTDIR)$(LAUNCHER_DIR)/chromium-launcher"
+	install -Dm755 chromium-launcher "$(DESTDIR)$(PREFIX)/bin/chromium$(CHROMIUM_SUFFIX)"
 	install -Dm755 launcher-derp "$(DESTDIR)$(LAUNCHER_DIR)/launcher-derp"
-	ln -fsr $(LAUNCHER_DIR)/chromium-launcher "$(DESTDIR)$(PREFIX)/bin/chromium$(CHROMIUM_SUFFIX)"
-
 
 uninstall:
 	$(RM) "$(DESTDIR)$(LAUNCHER_DIR)/chromium-launcher"
