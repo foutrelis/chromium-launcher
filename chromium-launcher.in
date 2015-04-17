@@ -58,7 +58,7 @@ sub get_user_flags {
 	unless (@user_flags) {
 		system '@LAUNCHER_DERP@',
 			'Unable to parse user flags',
-			"Please check $conf_filename for errors (e.g. mismatched quotes)." .
+			"Please check $conf_filename for errors (e.g. mismatched quotes). " .
 			"The launcher will now exit.";
 		exit 1;
 	}
