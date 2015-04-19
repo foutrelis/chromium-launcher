@@ -2,7 +2,7 @@
 
 # Simple Chromium launcher with support for Pepper Flash
 #
-# Some rudimentary support for user flags is provided via a chromium-flags.conf
+# Some rudimentary support for user flags is provided via a @CHROMIUM_NAME@-flags.conf
 # config file placed in $HOME/.config/ (or $XDG_CONFIG_HOME). Arguments are
 # split on whitespace and shell quoting rules apply but no further parsing is
 # performed. In case of improper quoting anywhere in the file, a fatal error is
