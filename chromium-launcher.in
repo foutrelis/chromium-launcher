@@ -56,7 +56,7 @@ sub get_user_flags {
 	my @user_flags = shellwords @lines;
 
 	unless (@user_flags) {
-		system '@LAUNCHER_DERP@',
+		system '@LAUNCHER_ERRMSG@',
 			'Unable to parse user flags',
 			"Please check $conf_path for errors (e.g. mismatched quotes). " .
 			"The launcher will now exit.";
@@ -67,6 +67,6 @@ sub get_user_flags {
 }
 
 $ENV{CHROME_WRAPPER} = abs_path($0);
-$ENV{CHROME_DESKTOP} = 'chromium@CHROMIUM_SUFFIX@.desktop';
+$ENV{CHROME_DESKTOP} = '@CHROMIUM_NAME@.desktop';
 
 exec '@CHROMIUM_BIN@', get_flash_flags, get_user_flags, @ARGV;

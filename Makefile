@@ -1,35 +1,36 @@
-OUT                = chromium-launcher launcher-derp
+OUT               := chromium-launcher launcher-errmsg
 
-PREFIX            ?= /usr/local
-PEPPER_FLASH_DIR  ?= /usr/lib/PepperFlash
-CHROMIUM_BIN      ?= /usr/lib/chromium/chromium
+CHROMIUM_SUFFIX   :=
+PREFIX            := /usr/local
 
-CHROMIUM_SUFFIX   ?=
+CHROMIUM_NAME     := chromium$(CHROMIUM_SUFFIX)
+CHROMIUM_BIN      := /usr/lib/$(CHROMIUM_NAME)/$(CHROMIUM_NAME)
+PEPPER_FLASH_DIR  := /usr/lib/PepperFlash
+
+LAUNCHER_LIBDIR   := $(PREFIX)/lib/$(CHROMIUM_NAME)-launcher
+LAUNCHER_ERRMSG   := $(LAUNCHER_LIBDIR)/launcher-errmsg
 
 override CFLAGS   += -std=c99 $(shell pkg-config --cflags gtk+-2.0)
 override LDLIBS   += $(shell pkg-config --libs gtk+-2.0)
 
-LAUNCHER_DIR      := $(PREFIX)/lib/chromium-launcher$(CHROMIUM_SUFFIX)
-LAUNCHER_DERP     := $(LAUNCHER_DIR)/launcher-derp
-
-all: chromium-launcher launcher-derp
+all: $(OUT)
 
 chromium-launcher: chromium-launcher.in
 	sed \
-		-e "s|@PEPPER_FLASH_DIR@|$(PEPPER_FLASH_DIR)|g" \
+		-e "s|@CHROMIUM_NAME@|$(CHROMIUM_NAME)|g" \
 		-e "s|@CHROMIUM_BIN@|$(CHROMIUM_BIN)|g" \
-		-e "s|@CHROMIUM_SUFFIX@|$(CHROMIUM_SUFFIX)|g" \
-		-e "s|@LAUNCHER_DERP@|$(LAUNCHER_DERP)|g" \
+		-e "s|@PEPPER_FLASH_DIR@|$(PEPPER_FLASH_DIR)|g" \
+		-e "s|@LAUNCHER_ERRMSG@|$(LAUNCHER_ERRMSG)|g" \
 		$< >$@
 
 install: all
-	install -Dm755 chromium-launcher "$(DESTDIR)$(PREFIX)/bin/chromium$(CHROMIUM_SUFFIX)"
-	install -Dm755 launcher-derp "$(DESTDIR)$(LAUNCHER_DIR)/launcher-derp"
+	install -Dm755 chromium-launcher "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
+	install -Dm755 launcher-errmsg "$(DESTDIR)$(LAUNCHER_ERRMSG)"
 
 uninstall:
-	$(RM) "$(DESTDIR)$(PREFIX)/bin/chromium$(CHROMIUM_SUFFIX)"
-	$(RM) "$(DESTDIR)$(LAUNCHER_DIR)/launcher-derp"
-	rmdir "$(DESTDIR)$(LAUNCHER_DIR)"
+	$(RM) "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
+	$(RM) "$(DESTDIR)$(LAUNCHER_ERRMSG)"
+	rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(LAUNCHER_LIBDIR)"
 
 clean:
 	$(RM) $(OUT)
