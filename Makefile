@@ -27,6 +27,9 @@ install: all
 	install -Dm755 chromium-launcher "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
 	install -Dm755 launcher-errmsg "$(DESTDIR)$(LAUNCHER_ERRMSG)"
 
+install-strip: install
+	strip --strip-all "$(DESTDIR)$(LAUNCHER_ERRMSG)"
+
 uninstall:
 	$(RM) "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
 	$(RM) "$(DESTDIR)$(LAUNCHER_ERRMSG)"
