@@ -47,7 +47,7 @@ sub get_flash_flags {
 }
 
 sub get_user_flags {
-	my $conf_path = config_home 'chromium-flags.conf';
+	my $conf_path = config_home '@CHROMIUM_NAME@-flags.conf';
 	open my $conf, '<', $conf_path or return;
 
 	my @lines = grep {!/^(\s*#|\s*$)/} map { chomp; $_ } <$conf>;
