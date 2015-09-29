@@ -10,8 +10,16 @@ PEPPER_FLASH_DIR  := /usr/lib/PepperFlash
 LAUNCHER_LIBDIR   := $(PREFIX)/lib/$(CHROMIUM_NAME)-launcher
 LAUNCHER_ERRMSG   := $(LAUNCHER_LIBDIR)/launcher-errmsg
 
-override CFLAGS   += -std=c99 $(shell pkg-config --cflags gtk+-2.0)
-override LDLIBS   += $(shell pkg-config --libs gtk+-2.0)
+ifeq ($(GTK),3)
+	GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
+	GTK_LIBS   = $(shell pkg-config --libs gtk+-3.0)
+else
+	GTK_CFLAGS = $(shell pkg-config --cflags gtk+-2.0)
+	GTK_LIBS   = $(shell pkg-config --libs gtk+-2.0)
+endif
+
+override CFLAGS   += -std=c99 $(GTK_CFLAGS)
+override LDLIBS   += $(GTK_LIBS)
 
 all: $(OUT)
 
