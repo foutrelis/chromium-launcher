@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 	"syscall"
@@ -31,4 +32,6 @@ func main()  {
 	os.Setenv("CHROME_DESKTOP", "chromium.desktop")
 
 	syscall.Exec(ChromiumBinary, args, os.Environ())
+	log.Fatal("Failed to execute " + ChromiumBinary)
+
 }
