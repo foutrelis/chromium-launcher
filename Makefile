@@ -21,7 +21,7 @@ $(CHROMIUM_NAME): $(SRC)
 	go build $(LDFLAGS) -o $(CHROMIUM_NAME) ./src/launcher
 
 check:
-	go test ./src/launcher
+	go test -cover ./src/launcher
 
 install: $(CHROMIUM_NAME)
 	install -D $(CHROMIUM_NAME) "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"

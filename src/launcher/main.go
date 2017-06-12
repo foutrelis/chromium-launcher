@@ -13,12 +13,18 @@ var ChromiumName = "chromium"
 var ChromiumBinary = "/usr/lib/chromium/chromium"
 var PepperFlashDir = "/usr/lib/PepperFlash"
 
-func main()  {
+var execCommand = syscall.Exec
+
+func main() {
+	os.Exit(RunLauncher())
+}
+
+func RunLauncher() int {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "-h", "--help":
 			showHelp()
-			os.Exit(0)
+			return 0
 		}
 	}
 
@@ -29,8 +35,9 @@ func main()  {
 
 	wrapper, _ := filepath.Abs(os.Args[0])
 	os.Setenv("CHROME_WRAPPER", wrapper)
-	os.Setenv("CHROME_DESKTOP", "chromium.desktop")
+	os.Setenv("CHROME_DESKTOP", ChromiumName + ".desktop")
 
-	syscall.Exec(ChromiumBinary, args, os.Environ())
-	log.Fatal("Failed to execute " + ChromiumBinary)
+	execCommand(ChromiumBinary, args, os.Environ())
+	log.Println("Failed to execute", ChromiumBinary)
+	return 1
 }
