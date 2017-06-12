@@ -1,49 +1,36 @@
-OUT               := chromium-launcher launcher-errmsg
+GOPATH = $(shell pwd)/vendor:$(shell pwd)
+export GOPATH
 
-CHROMIUM_SUFFIX   :=
-PREFIX            := /usr/local
+PREFIX = /usr/local
 
-CHROMIUM_NAME     := chromium$(CHROMIUM_SUFFIX)
-CHROMIUM_BIN      := /usr/lib/$(CHROMIUM_NAME)/$(CHROMIUM_NAME)
-PEPPER_FLASH_DIR  := /usr/lib/PepperFlash
+CHROMIUM_SUFFIX  =
+CHROMIUM_NAME    = chromium$(CHROMIUM_SUFFIX)
+CHROMIUM_BIN     = /usr/lib/$(CHROMIUM_NAME)/$(CHROMIUM_NAME)
+PEPPER_FLASH_DIR = /usr/lib/PepperFlash
 
-LAUNCHER_LIBDIR   := $(PREFIX)/lib/$(CHROMIUM_NAME)-launcher
-LAUNCHER_ERRMSG   := $(LAUNCHER_LIBDIR)/launcher-errmsg
+VERSION = $(shell git describe)
+LDFLAGS = -ldflags "\
+	-X main.Version=$(VERSION) \
+	-X main.ChromiumBinary=$(CHROMIUM_BIN) \
+	-X main.ChromiumName=$(CHROMIUM_NAME) \
+	-X main.PepperFlashDir=$(PEPPER_FLASH_DIR)"
 
-ifeq ($(GTK),3)
-	GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
-	GTK_LIBS   = $(shell pkg-config --libs gtk+-3.0)
-else
-	GTK_CFLAGS = $(shell pkg-config --cflags gtk+-2.0)
-	GTK_LIBS   = $(shell pkg-config --libs gtk+-2.0)
-endif
+$(CHROMIUM_NAME):
+	go build $(LDFLAGS) -o $(CHROMIUM_NAME) ./src/launcher
 
-override CFLAGS   += -std=c99 $(GTK_CFLAGS)
-override LDLIBS   += $(GTK_LIBS)
+check:
+	go test ./src/launcher
 
-all: $(OUT)
-
-chromium-launcher: chromium-launcher.in
-	sed \
-		-e "s|@CHROMIUM_NAME@|$(CHROMIUM_NAME)|g" \
-		-e "s|@CHROMIUM_BIN@|$(CHROMIUM_BIN)|g" \
-		-e "s|@PEPPER_FLASH_DIR@|$(PEPPER_FLASH_DIR)|g" \
-		-e "s|@LAUNCHER_ERRMSG@|$(LAUNCHER_ERRMSG)|g" \
-		$< >$@
-
-install: all
-	install -Dm755 chromium-launcher "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
-	install -Dm755 launcher-errmsg "$(DESTDIR)$(LAUNCHER_ERRMSG)"
+install: $(CHROMIUM_NAME)
+	install -D $(CHROMIUM_NAME) "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
 
 install-strip: install
-	strip --strip-all "$(DESTDIR)$(LAUNCHER_ERRMSG)"
+	strip "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
 
 uninstall:
 	$(RM) "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
-	$(RM) "$(DESTDIR)$(LAUNCHER_ERRMSG)"
-	rmdir --ignore-fail-on-non-empty "$(DESTDIR)$(LAUNCHER_LIBDIR)"
 
 clean:
-	$(RM) $(OUT)
+	$(RM) $(CHROMIUM_NAME)
 
-.PHONY: all clean install uninstall
+.PHONY: check install install-strip uninstall clean

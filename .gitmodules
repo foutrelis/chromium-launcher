@@ -1,0 +1,3 @@
+[submodule "vendor/src/github.com/mattn/go-shellwords"]
+	path = vendor/src/github.com/mattn/go-shellwords
+	url = https://github.com/mattn/go-shellwords
