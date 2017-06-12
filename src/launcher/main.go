@@ -33,5 +33,4 @@ func main()  {
 
 	syscall.Exec(ChromiumBinary, args, os.Environ())
 	log.Fatal("Failed to execute " + ChromiumBinary)
-
 }
