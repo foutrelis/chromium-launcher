@@ -21,7 +21,7 @@ func main()  {
 		}
 	}
 
-	args := []string{}
+	args := []string{ChromiumBinary}
 	args = append(args, getFlashFlags(PepperFlashDir)...)
 	args = append(args, getUserFlags()...)
 	args = append(args, os.Args[1:]...)
