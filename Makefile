@@ -15,7 +15,9 @@ LDFLAGS = -ldflags "\
 	-X main.ChromiumName=$(CHROMIUM_NAME) \
 	-X main.PepperFlashDir=$(PEPPER_FLASH_DIR)"
 
-$(CHROMIUM_NAME):
+SRC = $(shell find . -type f -name '*.go')
+
+$(CHROMIUM_NAME): $(SRC)
 	go build $(LDFLAGS) -o $(CHROMIUM_NAME) ./src/launcher
 
 check:
