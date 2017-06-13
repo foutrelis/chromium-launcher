@@ -1,4 +1,4 @@
-GOPATH = $(shell pwd)/vendor:$(shell pwd)
+GOPATH = $(shell pwd)/vendor
 export GOPATH
 
 PREFIX = /usr/local
@@ -18,10 +18,10 @@ LDFLAGS = -ldflags "\
 SRC = $(shell find . -type f -name '*.go')
 
 $(CHROMIUM_NAME): $(SRC)
-	go build $(LDFLAGS) -o $(CHROMIUM_NAME) ./src/launcher
+	go build $(LDFLAGS) -o $(CHROMIUM_NAME)
 
 check:
-	go test -cover ./src/launcher
+	go test -cover
 
 install: $(CHROMIUM_NAME)
 	install -D $(CHROMIUM_NAME) "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"

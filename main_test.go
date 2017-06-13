@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -10,6 +11,11 @@ import (
 )
 
 func TestMain(t *testing.T) {
+	defer func() {
+		log.SetOutput(os.Stderr)
+	}()
+	log.SetOutput(ioutil.Discard)
+
 	runMainHelpTestCase(t, "-h")
 	runMainHelpTestCase(t, "--help")
 
