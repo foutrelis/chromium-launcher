@@ -1,4 +1,4 @@
-package launcher
+package main
 
 import (
 	"log"
@@ -7,7 +7,17 @@ import (
 	"syscall"
 )
 
+// These should be set by the Makefile but also set sane default values
+var Version = "(unknown version)"
+var ChromiumName = "chromium"
+var ChromiumBinary = "/usr/lib/chromium/chromium"
+var PepperFlashDir = "/usr/lib/PepperFlash"
+
 var execCommand = syscall.Exec
+
+func main() {
+	os.Exit(RunLauncher())
+}
 
 func RunLauncher() int {
 	if len(os.Args) > 1 {

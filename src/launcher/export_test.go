@@ -1,4 +1,4 @@
-package launcher
+package main
 
 var GetFlashFlags = getFlashFlags
 var GetFlashVersion = getFlashVersion
