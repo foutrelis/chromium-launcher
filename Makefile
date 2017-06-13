@@ -10,18 +10,18 @@ PEPPER_FLASH_DIR = /usr/lib/PepperFlash
 
 VERSION = $(shell git describe)
 LDFLAGS = -ldflags "\
-	-X main.Version=$(VERSION) \
-	-X main.ChromiumBinary=$(CHROMIUM_BIN) \
-	-X main.ChromiumName=$(CHROMIUM_NAME) \
-	-X main.PepperFlashDir=$(PEPPER_FLASH_DIR)"
+	-X launcher.Version=$(VERSION) \
+	-X launcher.ChromiumBinary=$(CHROMIUM_BIN) \
+	-X launcher.ChromiumName=$(CHROMIUM_NAME) \
+	-X launcher.PepperFlashDir=$(PEPPER_FLASH_DIR)"
 
 SRC = $(shell find . -type f -name '*.go')
 
 $(CHROMIUM_NAME): $(SRC)
-	go build $(LDFLAGS) -o $(CHROMIUM_NAME) ./src/launcher
+	go build $(LDFLAGS) -o $(CHROMIUM_NAME) ./src/main
 
 check:
-	go test -cover ./src/launcher
+	go test -cover ./src/...
 
 install: $(CHROMIUM_NAME)
 	install -D $(CHROMIUM_NAME) "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
