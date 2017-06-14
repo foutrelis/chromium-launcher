@@ -11,38 +11,57 @@ import (
 )
 
 func TestMain(t *testing.T) {
+	oldOsExit := osExit
+	oldSyscallExec := syscallExec
+	defer func()  {
+		osExit = oldOsExit
+		syscallExec = oldSyscallExec
+		log.SetOutput(os.Stderr)
+	}()
+	log.SetOutput(ioutil.Discard)
+
+	var exitCode int
+	osExit = func(code int) { exitCode = code }
+	syscallExec = func(string, []string, []string) error { return nil }
+
+	if main(); exitCode != 1 {
+		t.Fatalf("main() exited with code %d instead of 1", exitCode)
+	}
+}
+
+func TestLauncher(t *testing.T) {
 	defer func() {
 		log.SetOutput(os.Stderr)
 	}()
 	log.SetOutput(ioutil.Discard)
 
-	runMainHelpTestCase(t, "-h")
-	runMainHelpTestCase(t, "--help")
+	runLauncherHelpTestCase(t, "-h")
+	runLauncherHelpTestCase(t, "--help")
 
-	runMainExecTestCase(t, []string{})
-	runMainExecTestCase(t, []string{"--test-flag"})
+	runLauncherExecTestCase(t, []string{})
+	runLauncherExecTestCase(t, []string{"--test-flag"})
 }
 
-func runMainHelpTestCase(t *testing.T, flag string) {
+func runLauncherHelpTestCase(t *testing.T, flag string) {
 	oldPepperFlashDir := pepperFlashDir
-	oldExecCommand := execCommand
+	oldSyscallExec := syscallExec
 	oldArgs := os.Args
 	oldStdout := os.Stdout
 	defer func() {
 		pepperFlashDir = oldPepperFlashDir
-		execCommand = oldExecCommand
+		syscallExec = oldSyscallExec
 		os.Args = oldArgs
 		os.Stdout = oldStdout
 	}()
 
 	pepperFlashDir = "testdata"
-	execCommand = func(string, []string, []string) error { return nil }
+	syscallExec = func(string, []string, []string) error { return nil }
 	os.Args = []string{"RunLauncher()", flag}
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 
 	if err := RunLauncher(); err != 0 {
-		t.Fatalf("%s exited with status code %d instead of 0", os.Args, err)
+		t.Fatalf("%s exited with code %d instead of 0", os.Args, err)
 	}
 
 	w.Close()
@@ -55,21 +74,21 @@ func runMainHelpTestCase(t *testing.T, flag string) {
 	}
 }
 
-func runMainExecTestCase(t *testing.T, flags []string) {
+func runLauncherExecTestCase(t *testing.T, flags []string) {
 	oldPepperFlashDir := pepperFlashDir
-	oldExecCommand := execCommand
+	oldSyscallExec := syscallExec
 	oldArgs := os.Args
 	oldConfigHome := os.Getenv("XDG_CONFIG_HOME")
 	defer func() {
 		pepperFlashDir = oldPepperFlashDir
-		execCommand = oldExecCommand
+		syscallExec = oldSyscallExec
 		os.Args = oldArgs
 		os.Setenv("XDG_CONFIG_HOME", oldConfigHome)
 	}()
 
 	pepperFlashDir = "testdata"
 	var execArgs []string
-	execCommand = func(argv0 string, argv []string, envv []string) error {
+	syscallExec = func(argv0 string, argv []string, envv []string) error {
 		execArgs = []string{argv0}
 		execArgs = append(execArgs, argv...)
 		return nil
@@ -85,7 +104,7 @@ func runMainExecTestCase(t *testing.T, flags []string) {
 	expectedArgs = append(expectedArgs, flags...)
 
 	if err := RunLauncher(); err != 1 {
-		t.Fatalf("%s exited with status code %d instead of 1", os.Args, err)
+		t.Fatalf("%s exited with code %d instead of 1", os.Args, err)
 	}
 
 	if !reflect.DeepEqual(execArgs, expectedArgs) {

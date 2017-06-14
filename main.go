@@ -15,10 +15,13 @@ var (
 	pepperFlashDir = "/usr/lib/PepperFlash"
 )
 
-var execCommand = syscall.Exec
+var (
+	osExit = os.Exit
+	syscallExec = syscall.Exec
+)
 
 func main() {
-	os.Exit(runLauncher())
+	osExit(runLauncher())
 }
 
 func runLauncher() int {
@@ -39,7 +42,7 @@ func runLauncher() int {
 	os.Setenv("CHROME_WRAPPER", wrapper)
 	os.Setenv("CHROME_DESKTOP", chromiumName+".desktop")
 
-	execCommand(chromiumBinary, args, os.Environ())
+	syscallExec(chromiumBinary, args, os.Environ())
 	log.Println("Failed to execute", chromiumBinary)
 	return 1
 }
