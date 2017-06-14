@@ -49,7 +49,7 @@ func runMainHelpTestCase(t *testing.T, flag string) {
 	out, _ := ioutil.ReadAll(r)
 
 	for _, expected := range []string{"Currently detected flags", "PepperFlash support"} {
-		if !strings.Contains(string(out), "Chromium launcher") {
+		if !strings.Contains(string(out), expected) {
 			t.Fatalf("Can't find %q in --help output", expected)
 		}
 	}
