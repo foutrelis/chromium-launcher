@@ -8,10 +8,12 @@ import (
 )
 
 // These can be overridden in the Makefile
-var launcherVersion = "(unknown version)"
-var chromiumName = "chromium"
-var chromiumBinary = "/usr/lib/chromium/chromium"
-var pepperFlashDir = "/usr/lib/PepperFlash"
+var (
+	launcherVersion = "(unknown version)"
+	chromiumName = "chromium"
+	chromiumBinary = "/usr/lib/chromium/chromium"
+	pepperFlashDir = "/usr/lib/PepperFlash"
+)
 
 var execCommand = syscall.Exec
 
