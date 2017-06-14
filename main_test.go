@@ -69,11 +69,9 @@ func runMainExecTestCase(t *testing.T, flags []string) {
 
 	pepperFlashDir = "testdata"
 	var execArgs []string
-	var execEnv []string
 	execCommand = func(argv0 string, argv []string, envv []string) error {
 		execArgs = []string{argv0}
 		execArgs = append(execArgs, argv...)
-		execEnv = envv
 		return nil
 	}
 	os.Args = []string{"RunLauncher()"}
