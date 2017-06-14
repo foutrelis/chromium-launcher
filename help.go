@@ -5,11 +5,11 @@ import (
 )
 
 func showHelp() {
-	flashFlags := fmt.Sprintf("%q", getFlashFlags(PepperFlashDir))
+	flashFlags := fmt.Sprintf("%q", getFlashFlags(pepperFlashDir))
 	userFlags := fmt.Sprintf("%q", getUserFlags())
 
 	fmt.Println(`
-Chromium launcher ` + Version + ` -- for Chromium help, see ` + ChromiumName + `(1)
+Chromium launcher ` + launcherVersion + ` -- for Chromium help, see ` + chromiumName + `(1)
 
 Custom flags are read from the following file:
 

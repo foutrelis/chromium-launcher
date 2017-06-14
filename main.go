@@ -7,19 +7,19 @@ import (
 	"syscall"
 )
 
-// These should be set by the Makefile but also set sane default values
-var Version = "(unknown version)"
-var ChromiumName = "chromium"
-var ChromiumBinary = "/usr/lib/chromium/chromium"
-var PepperFlashDir = "/usr/lib/PepperFlash"
+// These can be overridden in the Makefile
+var launcherVersion = "(unknown version)"
+var chromiumName = "chromium"
+var chromiumBinary = "/usr/lib/chromium/chromium"
+var pepperFlashDir = "/usr/lib/PepperFlash"
 
 var execCommand = syscall.Exec
 
 func main() {
-	os.Exit(RunLauncher())
+	os.Exit(runLauncher())
 }
 
-func RunLauncher() int {
+func runLauncher() int {
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
 		case "-h", "--help":
@@ -28,16 +28,16 @@ func RunLauncher() int {
 		}
 	}
 
-	args := []string{ChromiumBinary}
-	args = append(args, getFlashFlags(PepperFlashDir)...)
+	args := []string{chromiumBinary}
+	args = append(args, getFlashFlags(pepperFlashDir)...)
 	args = append(args, getUserFlags()...)
 	args = append(args, os.Args[1:]...)
 
 	wrapper, _ := filepath.Abs(os.Args[0])
 	os.Setenv("CHROME_WRAPPER", wrapper)
-	os.Setenv("CHROME_DESKTOP", ChromiumName + ".desktop")
+	os.Setenv("CHROME_DESKTOP", chromiumName+".desktop")
 
-	execCommand(ChromiumBinary, args, os.Environ())
-	log.Println("Failed to execute", ChromiumBinary)
+	execCommand(chromiumBinary, args, os.Environ())
+	log.Println("Failed to execute", chromiumBinary)
 	return 1
 }

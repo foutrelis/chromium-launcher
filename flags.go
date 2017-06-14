@@ -61,8 +61,8 @@ func readFlags(path string) []string {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
-		new_flags := parseFlags(line)
-		for _, flag := range new_flags {
+		newFlags := parseFlags(line)
+		for _, flag := range newFlags {
 			flags = append(flags, flag)
 		}
 	}
@@ -88,7 +88,7 @@ func getUserFlagsFilePath() string {
 }
 
 func getUserFlagsFileName() string {
-	return ChromiumName + "-flags.conf"
+	return chromiumName + "-flags.conf"
 }
 
 func getConfigHome() string {

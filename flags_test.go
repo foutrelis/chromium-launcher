@@ -16,7 +16,7 @@ func TestGetFlashFlags(t *testing.T) {
 
 func runGetFlashFlagsTestCase(t *testing.T, path string, expected []string) {
 	flags := getFlashFlags(path)
-	if ! reflect.DeepEqual(flags, expected) {
+	if !reflect.DeepEqual(flags, expected) {
 		t.Errorf("Reading flash flags from %s failed\ngot: %#v\nexpected: %#v", path, flags, expected)
 	}
 }
@@ -52,7 +52,7 @@ func TestReadFlags(t *testing.T) {
 
 func runReadFlagsTestCase(t *testing.T, path string, expected []string) {
 	flags := readFlags(path)
-	if ! reflect.DeepEqual(flags, expected) {
+	if !reflect.DeepEqual(flags, expected) {
 		t.Errorf("Reading flags from %s failed\ngot: %#v\nexpected: %#v", path, flags, expected)
 	}
 }
@@ -67,7 +67,7 @@ func TestParseFlags(t *testing.T) {
 
 func runParseFlagsTestCase(t *testing.T, desc string, line string, expected []string) {
 	flags := ParseFlags(line)
-	if ! reflect.DeepEqual(flags, expected) {
+	if !reflect.DeepEqual(flags, expected) {
 		t.Errorf("Parsing %s failed\ngot: %#v\nexpected: %#v", desc, flags, expected)
 	}
 }

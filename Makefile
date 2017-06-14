@@ -10,10 +10,10 @@ PEPPER_FLASH_DIR = /usr/lib/PepperFlash
 
 VERSION = $(shell git describe)
 LDFLAGS = -ldflags "\
-	-X main.Version=$(VERSION) \
-	-X main.ChromiumBinary=$(CHROMIUM_BIN) \
-	-X main.ChromiumName=$(CHROMIUM_NAME) \
-	-X main.PepperFlashDir=$(PEPPER_FLASH_DIR)"
+	-X main.launcherVersion=$(VERSION) \
+	-X main.chromiumBinary=$(CHROMIUM_BIN) \
+	-X main.chromiumName=$(CHROMIUM_NAME) \
+	-X main.pepperFlashDir=$(PEPPER_FLASH_DIR)"
 
 SRC = $(shell find . -type f -name '*.go')
 
