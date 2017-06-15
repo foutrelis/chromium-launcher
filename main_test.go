@@ -13,7 +13,7 @@ import (
 func TestMain(t *testing.T) {
 	oldOsExit := osExit
 	oldSyscallExec := syscallExec
-	defer func()  {
+	defer func() {
 		osExit = oldOsExit
 		syscallExec = oldSyscallExec
 		log.SetOutput(os.Stderr)

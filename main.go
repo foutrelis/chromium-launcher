@@ -10,13 +10,13 @@ import (
 // These can be overridden in the Makefile
 var (
 	launcherVersion = "(unknown version)"
-	chromiumName = "chromium"
-	chromiumBinary = "/usr/lib/chromium/chromium"
-	pepperFlashDir = "/usr/lib/PepperFlash"
+	chromiumName    = "chromium"
+	chromiumBinary  = "/usr/lib/chromium/chromium"
+	pepperFlashDir  = "/usr/lib/PepperFlash"
 )
 
 var (
-	osExit = os.Exit
+	osExit      = os.Exit
 	syscallExec = syscall.Exec
 )
 
