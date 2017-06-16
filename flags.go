@@ -56,6 +56,7 @@ func readFlags(path string) []string {
 	if err != nil {
 		return []string{}
 	}
+	defer file.Close()
 
 	var flags []string
 	scanner := bufio.NewScanner(file)
