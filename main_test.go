@@ -87,10 +87,14 @@ func runLauncherExecTestCase(t *testing.T, flags []string) {
 	}()
 
 	pepperFlashDir = "testdata"
+	var execCount int
 	var execArgs []string
+	var execEnv []string
 	syscallExec = func(argv0 string, argv []string, envv []string) error {
+		execCount++
 		execArgs = []string{argv0}
 		execArgs = append(execArgs, argv...)
+		execEnv = envv
 		return nil
 	}
 	os.Args = []string{"RunLauncher()"}
@@ -107,17 +111,27 @@ func runLauncherExecTestCase(t *testing.T, flags []string) {
 		t.Fatalf("%s exited with code %d instead of 1", os.Args, err)
 	}
 
+	if execCount != 1 {
+		t.Fatalf("Exec was called %d times; expected one call only", execCount)
+	}
+
 	if !reflect.DeepEqual(execArgs, expectedArgs) {
 		t.Fatalf("Wrong args passed to Exec\ngot: %#v\nexpected: %#v", execArgs, expectedArgs)
 	}
 
 	wrapper, _ := filepath.Abs(os.Args[0])
-	checkEnvVar(t, "CHROME_DESKTOP", chromiumName+".desktop")
-	checkEnvVar(t, "CHROME_WRAPPER", wrapper)
+	checkEnvVar(t, execEnv, "CHROME_DESKTOP", chromiumName+".desktop")
+	checkEnvVar(t, execEnv, "CHROME_WRAPPER", wrapper)
 }
 
-func checkEnvVar(t *testing.T, name string, expected string) {
-	if envVar := os.Getenv(name); envVar != expected {
-		t.Fatalf("%s env var is incorrect\ngot: %q\nexpected: %q", name, envVar, expected)
+func checkEnvVar(t *testing.T, envv []string, name string, expected string) {
+	for _, e := range envv {
+		pair := strings.SplitN(e, "=", 2)
+		if pair[0] == name && pair[1] == expected {
+			return
+		} else if pair[0] == name {
+			t.Fatalf("%s has wrong value\ngot: %q\nexpected: %q", name, pair[1], expected)
+		}
 	}
+	t.Fatalf("Missing %s from env vars", name)
 }
