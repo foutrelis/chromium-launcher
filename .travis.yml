@@ -1,11 +1,12 @@
-language: go
+language: c
 
-go:
-  - 1.8
+compiler:
+  - gcc
+  - clang
 
 install:
-  - go get -t ./...
-  - go get github.com/mattn/goveralls
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libjson-glib-dev
 
 script:
-  - $HOME/gopath/bin/goveralls -service=travis-ci
+  - make check
