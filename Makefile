@@ -13,11 +13,15 @@ override CPPFLAGS += \
 	-DCHROMIUM_BIN=\"$(CHROMIUM_BIN)\" \
 	-DPEPPER_FLASH_DIR=\"$(PEPPER_FLASH_DIR)\"
 
+ifeq ($(ENABLE_GCOV),1)
+	RUNTESTS_CFLAGS = -fprofile-arcs -ftest-coverage
+endif
+
 $(CHROMIUM_NAME): launcher.c config.h
 	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS)
 
 runtests: launcher_test.c minunit.h launcher.c config.h
-	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS)
+	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(RUNTESTS_CFLAGS) $(LDFLAGS) $< $(LDLIBS)
 
 check: runtests
 	./runtests
@@ -32,6 +36,6 @@ uninstall:
 	$(RM) "$(DESTDIR)$(PREFIX)/bin/$(CHROMIUM_NAME)"
 
 clean:
-	$(RM) $(CHROMIUM_NAME) runtests *.o
+	$(RM) $(CHROMIUM_NAME) runtests *.o *.{gcda,gcno,gcov}
 
 .PHONY: check install install-strip uninstall clean

@@ -1,3 +1,7 @@
-*.o
 /chromium*
 /runtests
+
+*.o
+*.gcda
+*.gcno
+*.gcov

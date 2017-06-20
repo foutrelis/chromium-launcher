@@ -1,12 +1,12 @@
 language: c
 
-compiler:
-  - gcc
-  - clang
-
 install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libjson-glib-dev
+  - sudo pip install cpp-coveralls
 
 script:
-  - make check
+  - make check ENABLE_GCOV=1
+
+after_success:
+  - coveralls -E '.*_test\.' -e minunit.h --gcov-options '\-lp'

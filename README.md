@@ -1,4 +1,4 @@
-# chromium-launcher [![Build Status](https://travis-ci.org/foutrelis/chromium-launcher.svg?branch=master)](https://travis-ci.org/foutrelis/chromium-launcher)
+# chromium-launcher [![Build Status](https://travis-ci.org/foutrelis/chromium-launcher.svg?branch=master)](https://travis-ci.org/foutrelis/chromium-launcher) [![Coverage Status](https://coveralls.io/repos/github/foutrelis/chromium-launcher/badge.svg)](https://coveralls.io/github/foutrelis/chromium-launcher)
 
 Chromium launcher with support for Pepper Flash and custom user flags.
 
