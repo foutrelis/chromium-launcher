@@ -97,21 +97,26 @@ static char *test_get_flash_flags() {
   return NULL;
 }
 
-static char *test_launcher() {
-  char *expected[] = {CHROMIUM_BINARY,
-                      "--ppapi-flash-version=4.5.6",
-                      "--ppapi-flash-path=testdata/libpepflashplayer.so",
-                      "--if",
-                      "--it",
-                      "--builds",
-                      "--it --ships",
-                      "--test-arg",
-                      NULL};
-  const char *argv[] = {"launcher()", "--test-arg", NULL};
-  int ret, i;
+static char *test_launcher(const char *argv1) {
+  const char *expected[] = {CHROMIUM_BINARY,
+                            "--ppapi-flash-version=4.5.6",
+                            "--ppapi-flash-path=testdata/libpepflashplayer.so",
+                            "--if",
+                            "--it",
+                            "--builds",
+                            "--it --ships",
+                            argv1,
+                            NULL};
+  const char *argv[] = {"launcher()", argv1};
+  int argc, ret, i;
 
+  argc = sizeof argv / sizeof argv[0];
+  if (!argv1)
+    argc--;
+
+  exec_count = 0;
   g_setenv("XDG_CONFIG_HOME", "testdata", 1);
-  ret = launcher((sizeof argv / sizeof argv[0]) - 1, argv);
+  ret = launcher(argc, argv);
 
   mu_assert(ret == 1, "launcher() returned %d, expected 1", ret);
   mu_assert(exec_count == 1, "exec_count = %d, expected 1", exec_count);
@@ -132,7 +137,7 @@ static char *test_launcher() {
 }
 
 static char *test_launcher_help(const char *argv1) {
-  const char *argv[] = {"launcher()", argv1, NULL};
+  const char *argv[] = {"launcher()", argv1};
   int ret, found_user_flags = 0, found_flash_flags = 0;
 
   int fds[2];
@@ -140,7 +145,7 @@ static char *test_launcher_help(const char *argv1) {
   while ((dup2(fds[1], STDERR_FILENO) == -1) && (errno == EINTR))
     ;
 
-  ret = launcher((sizeof argv / sizeof argv[0]) - 1, argv);
+  ret = launcher((sizeof argv / sizeof argv[0]), argv);
 
   close(fds[1]);
   while ((dup2(STDOUT_FILENO, STDERR_FILENO) == -1) && (errno == EINTR))
@@ -168,7 +173,8 @@ static char *all_tests() {
   mu_run_test(test_default_user_flags_conf_path);
   mu_run_test(test_get_user_flags);
   mu_run_test(test_get_flash_flags);
-  mu_run_test(test_launcher);
+  mu_run_test(test_launcher, NULL);
+  mu_run_test(test_launcher, "--arg1");
   mu_run_test(test_launcher_help, "-h");
   mu_run_test(test_launcher_help, "--help");
 
