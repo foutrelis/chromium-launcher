@@ -2,7 +2,7 @@ PREFIX = /usr/local
 
 CHROMIUM_SUFFIX  =
 CHROMIUM_NAME    = chromium$(CHROMIUM_SUFFIX)
-CHROMIUM_BIN     = /usr/lib/$(CHROMIUM_NAME)/$(CHROMIUM_NAME)
+CHROMIUM_BINARY  = /usr/lib/$(CHROMIUM_NAME)/$(CHROMIUM_NAME)
 PEPPER_FLASH_DIR = /usr/lib/PepperFlash
 
 override CFLAGS += $(shell pkg-config --cflags glib-2.0 json-glib-1.0)
@@ -10,17 +10,17 @@ override LDLIBS += $(shell pkg-config --libs glib-2.0 json-glib-1.0)
 override CPPFLAGS += \
 	-DLAUNCHER_VERSION=\"$(shell git describe)\" \
 	-DCHROMIUM_NAME=\"$(CHROMIUM_NAME)\" \
-	-DCHROMIUM_BIN=\"$(CHROMIUM_BIN)\" \
+	-DCHROMIUM_BINARY=\"$(CHROMIUM_BINARY)\" \
 	-DPEPPER_FLASH_DIR=\"$(PEPPER_FLASH_DIR)\"
 
 ifeq ($(ENABLE_GCOV),1)
 	RUNTESTS_CFLAGS = -fprofile-arcs -ftest-coverage
 endif
 
-$(CHROMIUM_NAME): launcher.c config.h
+$(CHROMIUM_NAME): launcher.c
 	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $< $(LDLIBS)
 
-runtests: launcher_test.c minunit.h launcher.c config.h
+runtests: launcher_test.c minunit.h launcher.c
 	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(RUNTESTS_CFLAGS) $(LDFLAGS) $< $(LDLIBS)
 
 check: runtests

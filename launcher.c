@@ -5,8 +5,6 @@
 #include <glib.h>
 #include <json-glib/json-glib.h>
 
-#include "config.h"
-
 static char *default_user_flags_conf_path() {
   const char *xdg_config_home = getenv("XDG_CONFIG_HOME"),
              *home = getenv("HOME");
