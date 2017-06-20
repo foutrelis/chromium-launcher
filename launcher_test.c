@@ -68,7 +68,7 @@ static char *test_get_user_flags() {
   length = g_slist_length(get_user_flags("fakedata/chromium-flags.conf"));
   mu_assert(length == 0, "got %d args, expected 0", length);
 
-  length = g_slist_length(NULL);
+  length = g_slist_length(get_user_flags(NULL));
   mu_assert(length == 0, "got %d args, expected 0", length);
 
   return NULL;
