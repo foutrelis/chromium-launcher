@@ -1,6 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#ifndef LAUNCHER_VERSION
+#define LAUNCHER_VERSION "(unknown version)"
+#endif
+
 #ifndef CHROMIUM_NAME
 #define CHROMIUM_NAME "chromium"
 #endif

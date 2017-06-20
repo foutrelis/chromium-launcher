@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -13,7 +14,7 @@ int execv(const char *path, char *const argv[]) {
   exec_count++;
   exec_path = g_strdup(path);
   exec_argv = g_strdupv((char **)argv);
-  return 0;
+  return 1;
 }
 
 #ifdef PEPPER_FLASH_DIR
@@ -112,7 +113,7 @@ static char *test_launcher() {
   g_setenv("XDG_CONFIG_HOME", "testdata", 1);
   ret = launcher((sizeof argv / sizeof argv[0]) - 1, argv);
 
-  mu_assert(ret == 0, "launcher() returned %d, expected 0", ret);
+  mu_assert(ret == 1, "launcher() returned %d, expected 1", ret);
   mu_assert(exec_count == 1, "exec_count = %d, expected 1", exec_count);
 
   for (i = 0; expected[i]; i++) {
@@ -130,11 +131,46 @@ static char *test_launcher() {
   return NULL;
 }
 
+static char *test_launcher_help(const char *argv1) {
+  const char *argv[] = {"launcher()", argv1, NULL};
+  int ret, found_user_flags = 0, found_flash_flags = 0;
+
+  int fds[2];
+  pipe(fds);
+  while ((dup2(fds[1], STDERR_FILENO) == -1) && (errno == EINTR))
+    ;
+
+  ret = launcher((sizeof argv / sizeof argv[0]) - 1, argv);
+
+  close(fds[1]);
+  while ((dup2(STDOUT_FILENO, STDERR_FILENO) == -1) && (errno == EINTR))
+    ;
+
+  mu_assert(ret == 0, "launcher() %s returned %d, expected 0", argv1, ret);
+
+  FILE *fp = fdopen(fds[0], "r");
+  char buf[LINE_MAX];
+  while (fgets(buf, sizeof buf, fp)) {
+    if (strcmp(buf, "Currently detected flags:\n") == 0)
+      found_user_flags = 1;
+    if (strcmp(buf, "Flags automatically added for PepperFlash support:\n") ==
+        0)
+      found_flash_flags = 1;
+  }
+
+  mu_assert(found_user_flags, "did not find user flags");
+  mu_assert(found_flash_flags, "did not find flash flags");
+
+  return NULL;
+}
+
 static char *all_tests() {
   mu_run_test(test_default_user_flags_conf_path);
   mu_run_test(test_get_user_flags);
   mu_run_test(test_get_flash_flags);
   mu_run_test(test_launcher);
+  mu_run_test(test_launcher_help, "-h");
+  mu_run_test(test_launcher_help, "--help");
 
   return NULL;
 }

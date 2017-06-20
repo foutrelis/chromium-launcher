@@ -80,15 +80,57 @@ finish:
   return list;
 }
 
+static void show_help(const char *user_flags_conf_path, GSList *user_flags,
+                      GSList *flash_flags) {
+  int num_args, i;
+
+  fprintf(
+      stderr,
+      "\n"
+      "Chromium launcher %s -- for Chromium help, see %s(1)\n"
+      "\n"
+      "Custom flags are read from the following file:\n\n"
+      "  %s\n\n"
+      "Arguments contained in that file are split on whitespace and shell "
+      "quoting\n"
+      "rules apply but no further parsing is performed. Lines starting with a "
+      "hash\n"
+      "symbol (#) are skipped. Lines with unbalanced quotes are skipped as "
+      "well.\n\n",
+      LAUNCHER_VERSION, CHROMIUM_NAME, user_flags_conf_path);
+
+  if ((num_args = g_slist_length(user_flags))) {
+    fprintf(stderr, "Currently detected flags:\n\n");
+    for (i = 0; i < num_args; i++)
+      fprintf(stderr, "  %s\n", (char *)g_slist_nth_data(user_flags, i));
+    fprintf(stderr, "\n");
+  }
+
+  if ((num_args = g_slist_length(flash_flags))) {
+    fprintf(stderr, "Flags automatically added for PepperFlash support:\n\n");
+    for (i = 0; i < num_args; i++)
+      fprintf(stderr, "  %s\n", (char *)g_slist_nth_data(flash_flags, i));
+    fprintf(stderr, "\n");
+  }
+}
+
 static int launcher(int argc, char const *argv[]) {
-  GSList *args = NULL;
   char *user_flags_conf_path = default_user_flags_conf_path();
+  GSList *user_flags = get_user_flags(user_flags_conf_path);
+  GSList *flash_flags = get_flash_flags(PEPPER_FLASH_DIR);
+  GSList *args = NULL;
   int i;
 
-  args = g_slist_append(args, g_strdup(CHROMIUM_BINARY));
-  args = g_slist_concat(args, get_flash_flags(PEPPER_FLASH_DIR));
-  args = g_slist_concat(args, get_user_flags(user_flags_conf_path));
+  if (argc > 1 &&
+      (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
+    show_help(user_flags_conf_path, user_flags, flash_flags);
+    return 0;
+  }
   free(user_flags_conf_path);
+
+  args = g_slist_append(args, g_strdup(CHROMIUM_BINARY));
+  args = g_slist_concat(args, flash_flags);
+  args = g_slist_concat(args, user_flags);
 
   for (i = 1; i < argc; i++)
     args = g_slist_append(args, g_strdup(argv[i]));
