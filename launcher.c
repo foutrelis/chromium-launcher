@@ -19,7 +19,7 @@ static char *default_user_flags_conf_path() {
 }
 
 static GSList *get_user_flags(const char *conf_path) {
-  GSList *list = NULL;
+  GSList *flags = NULL;
 
   if (!conf_path)
     return NULL;
@@ -39,17 +39,17 @@ static GSList *get_user_flags(const char *conf_path) {
         continue;
 
       for (i = 0; i < argcp; i++)
-        list = g_slist_append(list, g_strdup(argvp[i]));
+        flags = g_slist_append(flags, g_strdup(argvp[i]));
 
       g_strfreev(argvp);
     }
   }
 
-  return list;
+  return flags;
 }
 
 static GSList *get_flash_flags(const char *pepper_flash_dir) {
-  GSList *list = NULL;
+  GSList *flags = NULL;
   JsonParser *parser = json_parser_new();
   JsonReader *reader = json_reader_new(NULL);
 
@@ -64,18 +64,18 @@ static GSList *get_flash_flags(const char *pepper_flash_dir) {
 
   if (!version || strcmp(version, "") == 0)
     goto finish;
-  list = g_slist_append(list,
-                        g_strconcat("--ppapi-flash-version=", version, NULL));
+  flags = g_slist_append(flags,
+                         g_strconcat("--ppapi-flash-version=", version, NULL));
 
   char *path = g_build_filename(pepper_flash_dir, "libpepflashplayer.so", NULL);
-  list = g_slist_append(list, g_strconcat("--ppapi-flash-path=", path, NULL));
+  flags = g_slist_append(flags, g_strconcat("--ppapi-flash-path=", path, NULL));
   free(path);
 
 finish:
   free(manifest);
   g_object_unref(reader);
   g_object_unref(parser);
-  return list;
+  return flags;
 }
 
 static void show_help(const char *user_flags_conf_path, GSList *user_flags,
