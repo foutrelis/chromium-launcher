@@ -132,6 +132,8 @@ static char *test_launcher(const char *argv1) {
             "CHROME_WRAPPER has wrong value");
   mu_assert(strcmp(getenv("CHROME_DESKTOP"), CHROMIUM_NAME ".desktop") == 0,
             "CHROME_DESKTOP has wrong value");
+  mu_assert(strcmp(getenv("CHROME_VERSION_EXTRA"), CHROMIUM_VENDOR) == 0,
+            "CHROME_VERSION_EXTRA has wrong value");
 
   return NULL;
 }

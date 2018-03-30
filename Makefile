@@ -3,6 +3,7 @@ PREFIX = /usr/local
 CHROMIUM_SUFFIX  =
 CHROMIUM_NAME    = chromium$(CHROMIUM_SUFFIX)
 CHROMIUM_BINARY  = /usr/lib/$(CHROMIUM_NAME)/$(CHROMIUM_NAME)
+CHROMIUM_VENDOR  = $(shell . /etc/os-release; echo $$NAME)
 PEPPER_FLASH_DIR = /usr/lib/PepperFlash
 
 override CFLAGS += $(shell pkg-config --cflags glib-2.0 json-glib-1.0)
@@ -11,6 +12,7 @@ override CPPFLAGS += \
 	-DLAUNCHER_VERSION=\"$(shell git describe 2>/dev/null || echo v5)\" \
 	-DCHROMIUM_NAME=\"$(CHROMIUM_NAME)\" \
 	-DCHROMIUM_BINARY=\"$(CHROMIUM_BINARY)\" \
+	-DCHROMIUM_VENDOR="\"$(CHROMIUM_VENDOR)\"" \
 	-DPEPPER_FLASH_DIR=\"$(PEPPER_FLASH_DIR)\"
 
 ifeq ($(ENABLE_GCOV),1)

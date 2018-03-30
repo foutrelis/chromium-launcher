@@ -141,8 +141,9 @@ static int launcher(int argc, char const *argv[]) {
   exec_args[num_args] = NULL;
   g_slist_free_full(args, g_free);
 
-  g_setenv("CHROME_WRAPPER", argv[0], 1);
-  g_setenv("CHROME_DESKTOP", CHROMIUM_NAME ".desktop", 1);
+  g_setenv("CHROME_WRAPPER", argv[0], TRUE);
+  g_setenv("CHROME_DESKTOP", CHROMIUM_NAME ".desktop", TRUE);
+  g_setenv("CHROME_VERSION_EXTRA", CHROMIUM_VENDOR, FALSE);
 
   return execv(CHROMIUM_BINARY, exec_args);
 }
