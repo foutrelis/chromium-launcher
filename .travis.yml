@@ -3,7 +3,7 @@ language: c
 install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libjson-glib-dev
-  - sudo pip install cpp-coveralls
+  - sudo pip install -U cpp-coveralls
 
 script:
   - make check ENABLE_GCOV=1
