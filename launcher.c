@@ -143,7 +143,7 @@ static int launcher(int argc, char const *argv[]) {
 
   g_setenv("CHROME_WRAPPER", argv[0], TRUE);
   g_setenv("CHROME_DESKTOP", CHROMIUM_NAME ".desktop", TRUE);
-  g_setenv("CHROME_VERSION_EXTRA", CHROMIUM_VENDOR, FALSE);
+  g_setenv("CHROME_VERSION_EXTRA", CHROMIUM_VENDOR, TRUE);
 
   return execv(CHROMIUM_BINARY, exec_args);
 }
