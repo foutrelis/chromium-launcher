@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <glib.h>
 
@@ -16,11 +17,6 @@ int execv(const char *path, char *const argv[]) {
   exec_argv = g_strdupv((char **)argv);
   return 1;
 }
-
-#ifdef PEPPER_FLASH_DIR
-#undef PEPPER_FLASH_DIR
-#endif
-#define PEPPER_FLASH_DIR "testdata"
 
 #define TESTING
 #include "launcher.c"
@@ -74,38 +70,15 @@ static char *test_get_user_flags() {
   return NULL;
 }
 
-static char *test_get_flash_flags() {
-  char *expected[] = {"--ppapi-flash-version=4.5.6",
-                      "--ppapi-flash-path=testdata/libpepflashplayer.so", NULL};
-  GSList *args = get_flash_flags("testdata");
-  int i, length;
-
-  for (i = 0; expected[i]; i++) {
-    char *arg = g_slist_nth_data(args, i);
-    mu_assert(arg, "end of list (wanted: \"%s\")", expected[i]);
-    mu_assert(strcmp(arg, expected[i]) == 0, "arg = \"%s\" (wanted: \"%s\")",
-              arg, expected[i]);
-  }
-
-  length = g_slist_length(args);
-  mu_assert(length == i, "got %d args, expected %d", length, i);
-  g_slist_free_full(args, g_free);
-
-  length = g_slist_length(get_flash_flags("fakedata"));
-  mu_assert(length == 0, "got %d args, expected 0", length);
-
-  return NULL;
-}
-
 static char *test_launcher(const char *argv1) {
   const char *expected[] = {CHROMIUM_BINARY,
-                            "--ppapi-flash-version=4.5.6",
-                            "--ppapi-flash-path=testdata/libpepflashplayer.so",
+                            /* clang-format off */
                             "--if",
                             "--it",
                             "--builds",
                             "--it --ships",
                             argv1,
+                            /* clang-format on */
                             NULL};
   const char *argv[] = {"launcher()", argv1};
   int argc, ret, i;
@@ -140,7 +113,7 @@ static char *test_launcher(const char *argv1) {
 
 static char *test_launcher_help(const char *argv1) {
   const char *argv[] = {"launcher()", argv1};
-  int ret, found_user_flags = 0, found_flash_flags = 0;
+  int ret, found_user_flags = 0;
 
   int fds[2];
   pipe(fds);
@@ -160,13 +133,9 @@ static char *test_launcher_help(const char *argv1) {
   while (fgets(buf, sizeof buf, fp)) {
     if (strcmp(buf, "Currently detected flags:\n") == 0)
       found_user_flags = 1;
-    if (strcmp(buf, "Flags automatically added for PepperFlash support:\n") ==
-        0)
-      found_flash_flags = 1;
   }
 
   mu_assert(found_user_flags, "did not find user flags");
-  mu_assert(found_flash_flags, "did not find flash flags");
 
   return NULL;
 }
@@ -174,7 +143,6 @@ static char *test_launcher_help(const char *argv1) {
 static char *all_tests() {
   mu_run_test(test_default_user_flags_conf_path);
   mu_run_test(test_get_user_flags);
-  mu_run_test(test_get_flash_flags);
   mu_run_test(test_launcher, NULL);
   mu_run_test(test_launcher, "--arg1");
   mu_run_test(test_launcher_help, "-h");
