@@ -1,4 +1,4 @@
-# chromium-launcher [![Build Status](https://travis-ci.org/foutrelis/chromium-launcher.svg?branch=master)](https://travis-ci.org/foutrelis/chromium-launcher) [![Coverage Status](https://coveralls.io/repos/github/foutrelis/chromium-launcher/badge.svg)](https://coveralls.io/github/foutrelis/chromium-launcher)
+# chromium-launcher ![Tests](https://github.com/foutrelis/chromium-launcher/workflows/Tests/badge.svg) [![Coverage](https://codecov.io/gh/foutrelis/chromium-launcher/branch/master/graph/badge.svg)](https://codecov.io/gh/foutrelis/chromium-launcher)
 
 Chromium launcher with support for custom user flags.
 
