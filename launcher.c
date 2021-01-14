@@ -54,7 +54,7 @@ static void show_help(const char *user_flags_conf_path, GSList *user_flags) {
   fprintf(
       stderr,
       "\n"
-      "Chromium launcher %s -- for Chromium help, see %s(1)\n"
+      "Chromium launcher %s -- for Chromium help, see `man %s`\n"
       "\n"
       "Custom flags are read from the following file:\n\n"
       "  %s\n\n"
