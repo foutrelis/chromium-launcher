@@ -45,6 +45,7 @@ static GSList *get_user_flags(const char *conf_path) {
     }
   }
 
+  fclose(file);
   return flags;
 }
 
