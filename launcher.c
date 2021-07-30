@@ -5,6 +5,10 @@
 
 #include <glib.h>
 
+static char *default_system_flags_conf_path() {
+  return g_build_filename("/etc", CHROMIUM_NAME "-flags.conf", NULL);
+}
+
 static char *default_user_flags_conf_path() {
   const char *xdg_config_home = getenv("XDG_CONFIG_HOME"),
              *home = getenv("HOME");
@@ -14,12 +18,6 @@ static char *default_user_flags_conf_path() {
     path = g_build_filename(xdg_config_home, CHROMIUM_NAME "-flags.conf", NULL);
   else if (home)
     path = g_build_filename(home, ".config", CHROMIUM_NAME "-flags.conf", NULL);
-
-  return path;
-}
-
-static char *default_system_flags_conf_path() {
-  char *path = g_build_filename("/etc/", CHROMIUM_NAME "-flags.conf", NULL);
 
   return path;
 }
@@ -55,7 +53,8 @@ static GSList *get_flags(const char *conf_path) {
   return flags;
 }
 
-static void show_help(const char *user_flags_conf_path, const char *system_flags_conf_path, GSList *flags) {
+static void show_help(const char *system_flags_conf_path,
+                      const char *user_flags_conf_path, GSList *flags) {
   int num_args, i;
 
   fprintf(
@@ -63,15 +62,16 @@ static void show_help(const char *user_flags_conf_path, const char *system_flags
       "\n"
       "Chromium launcher %s -- for Chromium help, see `man %s`\n"
       "\n"
-      "Custom flags are read from the following file:\n\n"
+      "Custom flags are read in order from the following files:\n\n"
       "  %s\n  %s\n\n"
-      "Arguments contained in that file are split on whitespace and shell "
+      "Arguments included in those files are split on whitespace and shell "
       "quoting\n"
       "rules apply but no further parsing is performed. Lines starting with a "
       "hash\n"
       "symbol (#) are skipped. Lines with unbalanced quotes are skipped as "
       "well.\n\n",
-      LAUNCHER_VERSION, CHROMIUM_NAME, user_flags_conf_path, system_flags_conf_path);
+      LAUNCHER_VERSION, CHROMIUM_NAME, system_flags_conf_path,
+      user_flags_conf_path);
 
   if ((num_args = g_slist_length(flags))) {
     fprintf(stderr, "Currently detected flags:\n\n");
@@ -82,20 +82,20 @@ static void show_help(const char *user_flags_conf_path, const char *system_flags
 }
 
 static int launcher(int argc, char const *argv[]) {
-  char *user_flags_conf_path = default_user_flags_conf_path();
   char *system_flags_conf_path = default_system_flags_conf_path();
-  GSList *flags = get_flags(user_flags_conf_path);
-  flags = g_slist_concat(flags, get_flags(system_flags_conf_path));
+  char *user_flags_conf_path = default_user_flags_conf_path();
+  GSList *flags = g_slist_concat(get_flags(system_flags_conf_path),
+                                 get_flags(user_flags_conf_path));
   GSList *args = NULL;
   int i;
-  
+
   if (argc > 1 &&
       (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)) {
-    show_help(user_flags_conf_path, system_flags_conf_path, flags);
+    show_help(system_flags_conf_path, user_flags_conf_path, flags);
     return 0;
   }
-  free(user_flags_conf_path);
   free(system_flags_conf_path);
+  free(user_flags_conf_path);
 
   args = g_slist_append(args, g_strdup(CHROMIUM_BINARY));
   args = g_slist_concat(args, flags);
