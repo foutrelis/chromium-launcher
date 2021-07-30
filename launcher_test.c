@@ -135,6 +135,7 @@ static char *test_launcher_help(const char *argv1) {
   while ((dup2(fds[1], STDERR_FILENO) == -1) && (errno == EINTR))
     ;
 
+  g_setenv("XDG_CONFIG_HOME", "testdata", 1);
   ret = launcher((sizeof argv / sizeof argv[0]), argv);
 
   close(fds[1]);
