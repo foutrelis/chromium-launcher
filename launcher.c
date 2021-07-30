@@ -85,7 +85,7 @@ static int launcher(int argc, char const *argv[]) {
   char *user_flags_conf_path = default_user_flags_conf_path();
   char *system_flags_conf_path = default_system_flags_conf_path();
   GSList *flags = get_flags(user_flags_conf_path);
-  g_slist_append(flags, get_flags(system_flags_conf_path));
+  flags = g_slist_concat(flags, get_flags(system_flags_conf_path));
   GSList *args = NULL;
   int i;
   

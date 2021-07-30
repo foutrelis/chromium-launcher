@@ -45,9 +45,9 @@ static char *test_default_user_flags_conf_path() {
   return NULL;
 }
 
-static char *test_get_user_flags() {
+static char *test_get_flags() {
   char *expected[] = {"--if", "--it", "--builds", "--it --ships", NULL};
-  GSList *args = get_user_flags("testdata/chromium-flags.conf");
+  GSList *args = get_flags("testdata/chromium-flags.conf");
   int i, length;
 
   for (i = 0; expected[i]; i++) {
@@ -61,10 +61,10 @@ static char *test_get_user_flags() {
   mu_assert(length == i, "got %d args, expected %d", length, i);
   g_slist_free_full(args, g_free);
 
-  length = g_slist_length(get_user_flags("fakedata/chromium-flags.conf"));
+  length = g_slist_length(get_flags("fakedata/chromium-flags.conf"));
   mu_assert(length == 0, "got %d args, expected 0", length);
 
-  length = g_slist_length(get_user_flags(NULL));
+  length = g_slist_length(get_flags(NULL));
   mu_assert(length == 0, "got %d args, expected 0", length);
 
   return NULL;
@@ -142,7 +142,7 @@ static char *test_launcher_help(const char *argv1) {
 
 static char *all_tests() {
   mu_run_test(test_default_user_flags_conf_path);
-  mu_run_test(test_get_user_flags);
+  mu_run_test(test_get_flags);
   mu_run_test(test_launcher, NULL);
   mu_run_test(test_launcher, "--arg1");
   mu_run_test(test_launcher_help, "-h");
