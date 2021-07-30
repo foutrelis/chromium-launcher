@@ -5,7 +5,13 @@
 
 #include <glib.h>
 
-static char *default_system_flags_conf_path() {
+static char *
+#ifdef TESTING
+real_default_system_flags_conf_path()
+#else
+default_system_flags_conf_path()
+#endif
+{
   return g_build_filename("/etc", CHROMIUM_NAME "-flags.conf", NULL);
 }
 

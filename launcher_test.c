@@ -18,8 +18,23 @@ int execv(const char *path, char *const argv[]) {
   return 1;
 }
 
+static char *default_system_flags_conf_path() {
+  return g_build_filename("testdata/etc", CHROMIUM_NAME "-flags.conf", NULL);
+}
+
 #define TESTING
 #include "launcher.c"
+
+static char *test_default_system_flags_conf_path() {
+  char *path, *expected;
+
+  path = real_default_system_flags_conf_path();
+  expected = g_build_filename("/etc", CHROMIUM_NAME "-flags.conf", NULL);
+  mu_assert(strcmp(path, expected) == 0, "path = %s (wanted: %s)", path,
+            expected);
+  free(expected);
+  free(path);
+}
 
 static char *test_default_user_flags_conf_path() {
   const char *home = getenv("HOME");
@@ -72,13 +87,13 @@ static char *test_get_flags() {
 
 static char *test_launcher(const char *argv1) {
   const char *expected[] = {CHROMIUM_BINARY,
-                            /* clang-format off */
+                            "--system-flag1",
+                            "--system-flag2",
                             "--if",
                             "--it",
                             "--builds",
                             "--it --ships",
                             argv1,
-                            /* clang-format on */
                             NULL};
   const char *argv[] = {"launcher()", argv1};
   int argc, ret, i;
@@ -141,6 +156,7 @@ static char *test_launcher_help(const char *argv1) {
 }
 
 static char *all_tests() {
+  mu_run_test(test_default_system_flags_conf_path);
   mu_run_test(test_default_user_flags_conf_path);
   mu_run_test(test_get_flags);
   mu_run_test(test_launcher, NULL);
