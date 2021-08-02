@@ -19,7 +19,7 @@ int execv(const char *path, char *const argv[]) {
 }
 
 static char *default_system_flags_conf_path() {
-  return g_build_filename("testdata/etc", CHROMIUM_NAME "-flags.conf", NULL);
+  return g_build_filename("testdata", "etc", CHROMIUM_NAME "-flags.conf", NULL);
 }
 
 #define TESTING
