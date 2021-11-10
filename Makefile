@@ -1,8 +1,8 @@
-PREFIX = /usr/local
+PREFIX ?= /usr
 
 CHROMIUM_SUFFIX  =
 CHROMIUM_NAME    = chromium$(CHROMIUM_SUFFIX)
-CHROMIUM_BINARY  = /usr/lib/$(CHROMIUM_NAME)/$(CHROMIUM_NAME)
+CHROMIUM_BINARY  = $(PREFIX)/lib/$(CHROMIUM_NAME)/$(CHROMIUM_NAME)
 CHROMIUM_VENDOR  = $(shell . /etc/os-release; echo $$NAME)
 
 override CFLAGS += $(shell pkg-config --cflags glib-2.0)
